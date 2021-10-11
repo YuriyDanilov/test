@@ -1,0 +1,87 @@
+.wrapper {
+  height: 100%;
+  padding-top: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.title {
+  max-height: 50px;
+  height: 100%;
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  text-transform: capitalize;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 80px;
+}
+
+h2 {
+  font-size: 30px;
+  font-weight: 500;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 180, 239, 0.5);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.register,
+.login {
+  width: 25%;
+  min-height: 400px;
+  background-color: #fff;
+  padding: 20px;
+  margin: 0 30px;
+  border-radius: 12px;
+  -webkit-box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.form-control {
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 100%;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  padding-left: 20px;
+  height: 40px;
+}
+
+.btn-pos {
+  text-align: right;
+}
+
+.btn {
+  font-size: 14px;
+  color: #fff;
+  background: #00b4ef;
+  border-radius: 30px;
+  padding: 10px 25px;
+  text-transform: capitalize;
+}
+
+.btn-login {
+  margin-top: 55px;
+}
+/*# sourceMappingURL=index.css.map */
