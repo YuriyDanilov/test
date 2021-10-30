@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="./styles/css/index.css">
     <script>
 
+        let exit = document.querySelector('.btn-exit');
+
+        window.addEventListener('DOMContentLoaded', () => {
+
+            exit.addEventListener('click', () => {
+                document.querySelector('.contacts').style.display = 'none';
+                document.querySelector('.container').style.display = 'flex';
+            })
+        })
+
         class User {
             constructor(login, bornDate, password) {
                 this.login = login;
@@ -22,6 +32,7 @@
         }
 
         class UserServices {
+
             getAll() {
                 return fetch(UserServices.BASE_URL + 'users')
                     .then(response => response.json())
@@ -55,9 +66,73 @@
                     })
                 }).then(response => response.json());
             }
+
+            // addContact(contact) {
+            //     return fetch(UserServices.BASE_URL + 'contacts/add', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Authorization': "Bearer" + localStorage.getItem('token'),
+            //             'Accept': 'application/json',
+            //             'Content-Type': 'application/json'
+            //         },
+            //         body: JSON.stringify({
+            //             name: contact.name,
+            //             type: contact.type,
+            //             value: contact.value
+            //         })
+            //     }).then(response => response.json());
+            // }
+
+            // getAllContacts() {
+            //     return fetch(UserServices.BASE_URL + 'contacts', {
+            //         method: 'GET',
+            //         headers: {
+            //             'Authorization': "Bearer" + localStorage.getItem('token'),
+            //             'Accept': 'application/json',
+            //             'Content-Type': 'application/json'
+            //         }
+            //     })
+            //         .then(response => response.json())
+            //         .then(response => response(contacts));
+            // }
         }
 
         UserServices.BASE_URL = 'https://mag-contacts-api.herokuapp.com/';
+
+
+
+        class ContactServices {
+            addContact(contact) {
+                return fetch(UserServices.BASE_URL + 'contacts/add', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': "Bearer" + localStorage.getItem('token'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: contact.name,
+                        type: contact.type,
+                        value: contact.value
+                    })
+                }).then(response => response.json());
+            }
+
+            getAllContacts() {
+                return fetch(UserServices.BASE_URL + 'contacts', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': "Bearer" + localStorage.getItem('token'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(response => response(contacts));
+            }
+        }
+
+
 
         class RegisterForm {
             constructor(selector, userService) {
@@ -70,11 +145,13 @@
             }
 
             init() {
+                this.wrapper = document.querySelector('.container')
                 this.container = document.querySelector(this.selector);
                 this.loginInput = this.container.querySelector('#login-reg');
                 this.bornInput = this.container.querySelector('#date_born-reg');
                 this.passwordInput = this.container.querySelector('#password-reg');
                 this.button = this.container.querySelector('.btn');
+                this.exit = document.querySelector('.btn-exit');
             }
 
             bind() {
@@ -102,6 +179,8 @@
             succsessRegister() {
                 this.clearForm();
                 alert('Yahoo!!!');
+                this.wrapper.style.display = 'none';
+                this.exit.style.display = 'block';
             }
 
             clearForm() {
@@ -111,6 +190,8 @@
             }
 
         }
+
+
 
         class LoginForm {
             constructor(selector, userService) {
@@ -123,6 +204,8 @@
             }
 
             init() {
+                this.wrapper = document.querySelector('.container');
+                exit = document.querySelector('.btn-exit');
                 this.container = document.querySelector(this.selector);
                 this.loginInput = this.container.querySelector('#login-log');
                 this.passwordInput = this.container.querySelector('#password-log');
@@ -136,13 +219,16 @@
             login() {
                 let user = new User(
                     this.loginInput.value,
+                    null,
                     this.passwordInput.value
                 );
                 this.userService.login(user).then(response => {
-                    console.log(response.status)
                     if (response.status == 'error')
                         this.loginError(response.error);
-                    else this.succsessLogin();
+                    localStorage.setItem('token', response.token);
+                    this.succsessLogin();
+                    // localStorage.clear();
+
                 })
             }
 
@@ -150,16 +236,121 @@
                 alert(text);
             }
 
+            clearForm() {
+                this.loginInput.value = '';
+                this.passwordInput.value = '';
+            }
+
             succsessLogin() {
-                alert('Yahooeeee!!!');
+                this.wrapper.style.display = 'none';
+                exit.style.display = 'block';
+                this.clearForm();
             }
         }
 
+
+
+        class Contact {
+            constructor(name, type, value, id) {
+                this.name = name;
+                this.type = type;
+                this.value = value;
+                this.id = id;
+            }
+
+            createContact(contact) {
+                let contactElem = document.createElement('div');
+                contactElem.classList.add('contact');
+                contactElem.dataset.index = contact.id;
+
+                contactElem.insertAdjacentHTML('beforeend', '<img src="./assets/img/phonebook.png" alt="X">');
+                contactElem.append(`${contact.name}`);
+                return contactElem;
+            }
+
+            showContact() {
+                let showContact = document.querySelector('.contacts-list');
+                showContact.innerHTML = '';
+                let elem = this.contact.map((contact) => this.createContact(contact));
+                showContact.append(...elem);
+            }
+
+            createContactInfo(contact) {
+                let name = document.createElement('div');
+                name.innerHTML = contact.name;
+
+                let type = document.createElement('div');
+                type.innerHTML = contact.type;
+
+                let value = document.createElement('div');
+                value.innerHTML = contact.value;
+
+                let info = document.createElement('div');
+                info.append(name, type, value);
+
+                return info;
+            }
+
+            showContactinfo() {
+                let showInfo = document.querySelector('.contacts-info');
+                showContact.innerHTML = '';
+                let elem = this.contact.map((contact) => this.createContactInfo(contact));
+                showInfo.append(...elem);
+            }
+        }
+
+
+
+        class AddContact {
+            constructor(selector, contactService) {
+                this.selector = selector;
+                this.contactService = contactService;
+                document.addEventListener('DOMContentLoaded', () => {
+                    this.init();
+                    this.bind();
+                })
+            }
+
+            init() {
+                this.container = document.querySelector(this.selector);
+                this.nameInput = this.container.querySelector('#name');
+                this.typeInput = this.container.querySelector('#type');
+                this.valueInput = this.container.querySelector('#value');
+                this.button = this.container.querySelector('.btn');
+            }
+
+            bind() {
+                this.button.addEventListener('click', () => this.add())
+            }
+
+            add() {
+                let contact = new Contact(
+                    this.nameInput.value,
+                    this.typeInput.value,
+                    this.valueInput.value
+                );
+                this.contactService.addContact(contact).then(response => {
+                    if (response.status == 'error')
+                        this.addError(response.error);
+                    this.succsessAdd();
+                })
+            }
+
+            addError(text) {
+                alert(text);
+            }
+
+            succsessAdd() {
+                alert('yahoo!!!');
+            }
+        }
         let userService = new UserServices();
-        //userService.getAll().then(u => console.log(u));
-        //userService.login(new User('deimos', null, 'qwerty')).then(r => console.log(r));
         let registerForm = new RegisterForm('.register', userService);
         let loginForm = new LoginForm('.login', userService);
+        let contact = new Contact();
+        let contactService = new ContactServices();
+        let addContact = new AddContact('.contacts-info', contactService);
+
     </script>
 </head>
 
@@ -169,7 +360,7 @@
             <p>my phone book</p>
             <button class="btn btn-exit">Exit</button>
         </div>
-        <div class="container">
+        <div class="container flex">
             <div class="register">
                 <h2>
                     registration
@@ -208,6 +399,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="contacts flex">
+            <div class="contacts-list">
+            </div>
+
+            <div class="contacts-show">
+            </div>
+
+            <div class="contacts-info">
+
+                <div class="form-control">
+                    <label for="name">Name:</label>
+                    <input type="text" class="input" id="name">
+                </div>
+
+                <div class="form-control">
+                    <label for="type">Phone/e-mail:</label>
+                    <select class="input" id="type">
+                        <option>phone</option>
+                        <option>e-mail</option>
+                    </select>
+                </div>
+
+                <div class="form-control">
+                    <label for="value">Contact:</label>
+                    <input type="email" class="input" id="value">
+                </div>
+
+                <div class="form-control btn-pos">
+                    <button class="btn btn-login">Add contact</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
 </body>
